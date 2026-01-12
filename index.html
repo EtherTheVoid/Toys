@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPlay Toys | Toys for 3-6 Year Olds</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka for a playful look, Inter for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6, .brand-font {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .blob-shape {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B6B',    /* Playful Red */
+                        secondary: '#4ECDC4',  /* Teal */
+                        accent: '#FFE66D',     /* Yellow */
+                        dark: '#292F36',       /* Dark Gray */
+                        light: '#F7FFF7',      /* Off White */
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-dark flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo -->
+                <div class="flex items-center cursor-pointer" onclick="router.navigate('home')">
+                    <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white mr-2 transform -rotate-6 shadow-lg">
+                        <i data-lucide="puzzle" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="brand-font text-2xl font-bold text-dark tracking-tight">SmartPlay</span>
+                        <span class="hidden sm:block text-xs text-gray-500 font-medium tracking-wider">LEARN THROUGH PLAY</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <button onclick="router.navigate('home')" class="text-gray-600 hover:text-primary font-medium transition">Home</button>
+                    <button onclick="router.navigate('shop')" class="text-gray-600 hover:text-primary font-medium transition">Shop Toys</button>
+                    <button onclick="router.navigate('about')" class="text-gray-600 hover:text-primary font-medium transition">Our Mission</button>
+                </div>
+
+                <!-- Cart & Mobile Menu Button -->
+                <div class="flex items-center space-x-4">
+                    <button onclick="cart.toggle()" class="relative p-2 text-gray-600 hover:text-primary transition bg-gray-100 rounded-full hover:bg-red-50">
+                        <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-primary text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center transform scale-0 transition-transform duration-200">0</span>
+                    </button>
+                    <button class="md:hidden p-2 text-gray-600" onclick="mobileMenu.toggle()">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 p-4 shadow-lg absolute w-full">
+            <div class="flex flex-col space-y-4">
+                <button onclick="router.navigate('home')" class="text-left font-medium text-gray-700">Home</button>
+                <button onclick="router.navigate('shop')" class="text-left font-medium text-gray-700">Shop Toys</button>
+                <button onclick="router.navigate('about')" class="text-left font-medium text-gray-700">Our Mission</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="app" class="flex-grow">
+        <!-- Content injected via JS -->
+    </main>
+
+    <!-- Shopping Cart Sidebar (Overlay) -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden transition-opacity duration-300 opacity-0" onclick="cart.toggle()"></div>
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+            <h2 class="text-xl font-bold brand-font text-gray-800">Your Cart</h2>
+            <button onclick="cart.toggle()" class="text-gray-400 hover:text-red-500">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Cart Items Injected Here -->
+            <div class="text-center text-gray-400 mt-10">
+                <i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                <p>Your cart is empty.</p>
+                <button onclick="cart.toggle(); router.navigate('shop')" class="mt-4 text-primary font-medium hover:underline">Start Shopping</button>
+            </div>
+        </div>
+        <div class="p-6 border-t border-gray-100 bg-gray-50">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-gray-600 font-medium">Subtotal</span>
+                <span id="cart-total" class="text-2xl font-bold text-dark">$0.00</span>
+            </div>
+            <button onclick="alert('Checkout functionality coming soon!')" class="w-full bg-primary hover:bg-red-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition active:scale-95 flex justify-center items-center gap-2">
+                Checkout <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center mb-4">
+                        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white mr-2">
+                            <i data-lucide="puzzle" class="w-5 h-5"></i>
+                        </div>
+                        <span class="brand-font text-xl font-bold">SmartPlay</span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Curating the smartest toys for the brightest minds. Helping children aged 3-6 discover their potential through play.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4 brand-font text-secondary">Shop</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" onclick="router.navigate('shop')" class="hover:text-white transition">All Toys</a></li>
+                        <li><a href="#" class="hover:text-white transition">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-white transition">Best Sellers</a></li>
+                        <li><a href="#" class="hover:text-white transition">Gift Cards</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4 brand-font text-accent">Support</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Shipping & Returns</a></li>
+                        <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4 brand-font text-primary">Stay Connected</h3>
+                    <p class="text-gray-400 text-sm mb-4">Join our newsletter for play tips and exclusive offers.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Email address" class="bg-gray-800 text-white px-4 py-2 rounded-l-lg focus:outline-none focus:ring-1 focus:ring-primary w-full text-sm">
+                        <button class="bg-primary px-4 py-2 rounded-r-lg hover:bg-red-500 transition">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-sm">
+                &copy; 2024 SmartPlay Toys. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Templates (Hidden) -->
+    <template id="tpl-home">
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-br from-yellow-50 to-orange-50 relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-secondary opacity-10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 bg-primary opacity-10 rounded-full blur-3xl"></div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 md:pr-12 text-center md:text-left z-10 fade-in">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-white border border-gray-200 text-primary font-bold text-sm tracking-wide mb-6 shadow-sm">AGES 3 TO 6</span>
+                    <h1 class="text-5xl md:text-6xl font-extrabold text-dark leading-tight mb-6">
+                        Play Smarter,<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-500">Grow Faster.</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+                        Discover toys hand-picked by child development experts to spark creativity, logic, and joy in your preschooler.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
+                        <button onclick="router.navigate('shop')" class="bg-dark text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:bg-gray-800 transform hover:-translate-y-1 transition duration-200">
+                            Shop All Toys
+                        </button>
+                        <button onclick="router.navigate('about')" class="bg-white text-dark border-2 border-gray-200 font-bold py-4 px-8 rounded-xl hover:border-dark hover:bg-gray-50 transition duration-200">
+                            Our Mission
+                        </button>
+                    </div>
+                </div>
+                <div class="md:w-1/2 mt-12 md:mt-0 relative z-10 fade-in">
+                    <div class="relative">
+                         <!-- Abstract shape background -->
+                        <div class="absolute inset-0 bg-accent rounded-full opacity-20 blur-2xl transform scale-90"></div>
+                        <img src="https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Happy kid playing" class="relative rounded-3xl shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition duration-500 object-cover h-[400px] w-full">
+                        <!-- Floating badges -->
+                        <div class="absolute -top-6 -right-6 bg-white p-4 rounded-2xl shadow-xl animate-bounce" style="animation-duration: 3s;">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-green-100 p-2 rounded-lg text-green-600">
+                                    <i data-lucide="award" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-gray-500 font-bold">VOTED</div>
+                                    <div class="font-bold text-dark">#1 for Kids</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Shop by Skill</h2>
+                    <p class="text-gray-500 max-w-2xl mx-auto">We don't just sell toys; we sell tools for development. Find the perfect match for your child's growth.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Category 1 -->
+                    <div class="group cursor-pointer" onclick="router.navigate('shop')">
+                        <div class="bg-blue-50 rounded-3xl p-8 transition duration-300 hover:shadow-xl hover:-translate-y-2 h-full border border-blue-100">
+                            <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-blue-200">
+                                <i data-lucide="brain-circuit" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3 group-hover:text-blue-600 transition">Logic & STEM</h3>
+                            <p class="text-gray-600 mb-6">Building blocks, puzzles, and coding bots that teach cause & effect and problem solving.</p>
+                            <span class="text-blue-600 font-bold flex items-center text-sm">Explore Logic <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></span>
+                        </div>
+                    </div>
+
+                    <!-- Category 2 -->
+                    <div class="group cursor-pointer" onclick="router.navigate('shop')">
+                        <div class="bg-pink-50 rounded-3xl p-8 transition duration-300 hover:shadow-xl hover:-translate-y-2 h-full border border-pink-100">
+                            <div class="w-16 h-16 bg-pink-500 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-pink-200">
+                                <i data-lucide="palette" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3 group-hover:text-pink-600 transition">Arts & Creative</h3>
+                            <p class="text-gray-600 mb-6">Easels, musical instruments, and crafts that help express emotions and boost imagination.</p>
+                            <span class="text-pink-600 font-bold flex items-center text-sm">Explore Creative <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></span>
+                        </div>
+                    </div>
+
+                    <!-- Category 3 -->
+                    <div class="group cursor-pointer" onclick="router.navigate('shop')">
+                        <div class="bg-green-50 rounded-3xl p-8 transition duration-300 hover:shadow-xl hover:-translate-y-2 h-full border border-green-100">
+                            <div class="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-green-200">
+                                <i data-lucide="activity" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3 group-hover:text-green-600 transition">Active Play</h3>
+                            <p class="text-gray-600 mb-6">Balance bikes, climbers, and games that develop gross motor skills and coordination.</p>
+                            <span class="text-green-600 font-bold flex items-center text-sm">Explore Active <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Products Preview -->
+        <section class="py-20 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-end mb-12">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-2">Trending Now</h2>
+                        <p class="text-gray-500">Parents are loving these picks this month.</p>
+                    </div>
+                    <button onclick="router.navigate('shop')" class="hidden md:flex items-center text-primary font-bold hover:text-red-700 transition">
+                        View All Products <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+                    </button>
+                </div>
+                <!-- Grid Container injected by JS -->
+                <div id="home-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+                
+                <div class="mt-12 text-center md:hidden">
+                     <button onclick="router.navigate('shop')" class="btn-primary w-full py-4 rounded-xl bg-white border border-gray-200 shadow-sm text-dark font-bold">
+                        View All Products
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Trust Indicators -->
+        <section class="py-16 bg-dark text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div class="p-4">
+                        <i data-lucide="shield-check" class="w-10 h-10 mx-auto mb-4 text-secondary"></i>
+                        <h4 class="font-bold text-lg mb-2">Safety First</h4>
+                        <p class="text-gray-400 text-sm">All toys are rigorously tested to meet global safety standards.</p>
+                    </div>
+                    <div class="p-4">
+                        <i data-lucide="heart-handshake" class="w-10 h-10 mx-auto mb-4 text-primary"></i>
+                        <h4 class="font-bold text-lg mb-2">Parent Approved</h4>
+                        <p class="text-gray-400 text-sm">Curated by a community of parents and child psychologists.</p>
+                    </div>
+                    <div class="p-4">
+                        <i data-lucide="truck" class="w-10 h-10 mx-auto mb-4 text-accent"></i>
+                        <h4 class="font-bold text-lg mb-2">Fast Shipping</h4>
+                        <p class="text-gray-400 text-sm">Free shipping on orders over $50. Same day dispatch.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="tpl-shop">
+        <div class="bg-gray-50 min-h-screen py-12 fade-in">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-4xl font-bold text-dark mb-2">Shop Toys</h1>
+                        <p class="text-gray-500">Showing <span id="product-count">0</span> results for ages 3-6.</p>
+                    </div>
+                    
+                    <div class="mt-4 md:mt-0 flex gap-4">
+                        <select id="sort-select" class="bg-white border border-gray-200 text-gray-700 py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer">
+                            <option value="featured">Featured</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-8">
+                    <!-- Sidebar Filters -->
+                    <div class="w-full md:w-64 flex-shrink-0">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24">
+                            <div class="mb-6">
+                                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="filter" class="w-4 h-4"></i> Categories</h3>
+                                <div class="space-y-2" id="category-filters">
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="category" value="all" checked class="form-radio text-primary h-4 w-4">
+                                        <span class="text-gray-700">All Toys</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="category" value="STEM" class="form-radio text-primary h-4 w-4">
+                                        <span class="text-gray-700">STEM & Logic</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="category" value="Creative" class="form-radio text-primary h-4 w-4">
+                                        <span class="text-gray-700">Creative Arts</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="category" value="Active" class="form-radio text-primary h-4 w-4">
+                                        <span class="text-gray-700">Active Play</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="category" value="Pretend" class="form-radio text-primary h-4 w-4">
+                                        <span class="text-gray-700">Pretend Play</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="p-4 bg-yellow-50 rounded-xl border border-yellow-100">
+                                <h4 class="font-bold text-yellow-800 text-sm mb-1">Need help?</h4>
+                                <p class="text-xs text-yellow-700 mb-2">Our toy experts can help you find the perfect gift.</p>
+                                <button class="text-xs font-bold text-yellow-800 underline">Chat with us</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Grid -->
+                    <div class="flex-1">
+                        <div id="shop-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Products injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-about">
+        <div class="fade-in">
+            <!-- Mission Hero -->
+            <section class="bg-dark text-white py-20">
+                <div class="max-w-4xl mx-auto px-4 text-center">
+                    <span class="text-secondary font-bold tracking-wider text-sm uppercase mb-4 block">About SmartPlay</span>
+                    <h1 class="text-4xl md:text-5xl font-bold mb-8">We believe play is the highest form of research.</h1>
+                    <p class="text-xl text-gray-400 leading-relaxed">
+                        At SmartPlay, we don't just sell plastic objects. We curate experiences that build neural pathways, spark curiosity, and create moments of pure joy for children aged 3 to 6.
+                    </p>
+                </div>
+            </section>
+
+            <!-- The Story -->
+            <section class="py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row items-center gap-16">
+                        <div class="md:w-1/2">
+                             <img src="https://images.unsplash.com/photo-1587654780291-39c9404d746b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Child playing with blocks" class="rounded-3xl shadow-2xl rotate-2 hover:rotate-0 transition duration-500">
+                        </div>
+                        <div class="md:w-1/2">
+                            <h2 class="text-3xl font-bold mb-6 text-dark">Our Story</h2>
+                            <div class="space-y-4 text-gray-600 leading-relaxed">
+                                <p>
+                                    Founded in 2023 by a group of parents and educators, SmartPlay began with a simple frustration: toy stores were full of flashy, noisy gadgets that kids played with for five minutes and then discarded.
+                                </p>
+                                <p>
+                                    We wanted toys that lasted. Toys that grew with the child. Toys that required <strong>active</strong> participation, not passive watching.
+                                </p>
+                                <p>
+                                    Today, we offer a carefully selected directory of toys specifically for the "Golden Years" of development (ages 3-6), focusing on Open-Ended Play, STEM foundations, and Emotional Intelligence.
+                                </p>
+                            </div>
+                            
+                            <div class="mt-8 grid grid-cols-2 gap-4">
+                                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                    <h4 class="font-bold text-primary text-2xl mb-1">500+</h4>
+                                    <p class="text-sm text-gray-500">Curated Products</p>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                    <h4 class="font-bold text-secondary text-2xl mb-1">50k+</h4>
+                                    <p class="text-sm text-gray-500">Happy Families</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Values -->
+            <section class="py-20 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-bold mb-4">Our Core Values</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-white p-8 rounded-2xl shadow-sm border-b-4 border-primary">
+                            <h3 class="text-xl font-bold mb-3">Child-Led Play</h3>
+                            <p class="text-gray-600">We prioritize open-ended toys that let the child decide how to play, fostering independence and creativity.</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-2xl shadow-sm border-b-4 border-secondary">
+                            <h3 class="text-xl font-bold mb-3">Quality over Quantity</h3>
+                            <p class="text-gray-600">One great set of wooden blocks is worth a thousand cheap plastic trinkets. We choose durability and safety.</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-2xl shadow-sm border-b-4 border-accent">
+                            <h3 class="text-xl font-bold mb-3">Inclusivity</h3>
+                            <p class="text-gray-600">Play is for everyone. We strive to offer toys that represent diverse abilities, backgrounds, and interests.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </template>
+
+    <script>
+        // --- Data ---
+        const products = [
+            {
+                id: 1,
+                name: "Magna-Tiles Builder Set",
+                price: 49.99,
+                category: "STEM",
+                age: "3+",
+                image: "https://images.unsplash.com/photo-1596464716127-f9a86184a469?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                description: "Magnetic building tiles that teach geometry and architecture."
+            },
+            {
+                id: 2,
+                name: "Wooden Balance Bike",
+                price: 89.99,
+                category: "Active",
+                age: "3-5",
+                image: "https://images.unsplash.com/photo-1595304901768-3e4b3e6e8e8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", 
+                description: "The perfect starter bike to learn balance without training wheels."
+            },
+            {
+                id: 3,
+                name: "Junior Doctor Kit",
+                price: 34.95,
+                category: "Pretend",
+                age: "3-6",
+                image: "https://images.unsplash.com/photo-1632213702844-1e0606d934df?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                description: "Realistic wooden medical tools for imaginative role-play."
+            },
+            {
+                id: 4,
+                name: "Coding Caterpillar",
+                price: 59.99,
+                category: "STEM",
+                age: "4-6",
+                image: "https://images.unsplash.com/photo-1558060370-d644479cb673?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                description: "Learn basic coding logic by arranging the segments of this robot."
+            },
+            {
+                id: 5,
+                name: "Deluxe Art Easel",
+                price: 75.00,
+                category: "Creative",
+                age: "3+",
+                image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                description: "Double-sided easel with chalkboard, whiteboard, and paper roll."
+            },
+            {
+                id: 6,
+                name: "Sensory Sand Box",
+                price: 24.99,
+                category: "Creative",
+                age: "3+",
+                image: "https://images.unsplash.com/photo-1622350711684-25cb484c20f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                description: "Kinetic sand kit with molds for mess-free tactile play."
+            },
+            {
+                id: 7,
+                name: "Alphabet Puzzle Train",
+                price: 19.99,
+                category: "STEM",
+                age: "3-5",
+                image: "https://images.unsplash.com/photo-1588053685358-154df663d234?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                description: "Giant floor puzzle that teaches letters and sequencing."
+            },
+            {
+                id: 8,
+                name: "Mini Garden Tools",
+                price: 15.50,
+                category: "Active",
+                age: "4-6",
+                image: "https://images.unsplash.com/photo-1416879745582-7f55b0458b2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                description: "Real metal tools sized for little hands to help in the garden."
+            }
+        ];
+
+        // --- Routing ---
+        const router = {
+            init: function() {
+                window.addEventListener('popstate', () => this.handleRoute());
+                this.handleRoute(); // Initial load
+            },
+            navigate: function(route) {
+                history.pushState({}, '', '#' + route);
+                this.handleRoute();
+                window.scrollTo(0, 0);
+            },
+            handleRoute: function() {
+                const hash = window.location.hash.slice(1) || 'home';
+                const app = document.getElementById('app');
+                
+                // Reset Active Nav State
+                document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('text-primary'));
+                
+                // Clear existing content
+                app.innerHTML = '';
+
+                if (hash === 'home') {
+                    const tpl = document.getElementById('tpl-home');
+                    app.appendChild(tpl.content.cloneNode(true));
+                    this.renderHomeProducts();
+                    lucide.createIcons();
+                } else if (hash === 'shop') {
+                    const tpl = document.getElementById('tpl-shop');
+                    app.appendChild(tpl.content.cloneNode(true));
+                    this.setupShop();
+                    lucide.createIcons();
+                } else if (hash === 'about') {
+                    const tpl = document.getElementById('tpl-about');
+                    app.appendChild(tpl.content.cloneNode(true));
+                    lucide.createIcons();
+                }
+            },
+            renderHomeProducts: function() {
+                const grid = document.getElementById('home-products-grid');
+                if(!grid) return;
+                
+                // Take first 4 products
+                products.slice(0, 4).forEach(product => {
+                    grid.innerHTML += this.createProductCard(product);
+                });
+            },
+            setupShop: function() {
+                const grid = document.getElementById('shop-products-grid');
+                const filters = document.getElementById('category-filters');
+                const countSpan = document.getElementById('product-count');
+                
+                const render = (category = 'all') => {
+                    grid.innerHTML = '';
+                    const filtered = category === 'all' 
+                        ? products 
+                        : products.filter(p => p.category === category);
+                    
+                    countSpan.innerText = filtered.length;
+                    
+                    if(filtered.length === 0) {
+                        grid.innerHTML = `<div class="col-span-3 text-center py-10 text-gray-400">No products found in this category.</div>`;
+                    } else {
+                        filtered.forEach(p => {
+                            grid.innerHTML += this.createProductCard(p);
+                        });
+                    }
+                    lucide.createIcons();
+                };
+
+                // Initial Render
+                render();
+
+                // Event Listeners for Filters
+                filters.addEventListener('change', (e) => {
+                    if (e.target.name === 'category') {
+                        render(e.target.value);
+                    }
+                });
+            },
+            createProductCard: function(product) {
+                return `
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition duration-300 group flex flex-col h-full">
+                    <div class="relative overflow-hidden h-48 bg-gray-100">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
+                        <div class="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold text-gray-600">
+                            Ages ${product.age}
+                        </div>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col">
+                        <div class="text-xs font-bold text-primary uppercase tracking-wide mb-1">${product.category}</div>
+                        <h3 class="font-bold text-lg text-dark mb-2 leading-tight">${product.name}</h3>
+                        <p class="text-gray-500 text-sm mb-4 line-clamp-2 flex-1">${product.description}</p>
+                        <div class="flex items-center justify-between mt-auto">
+                            <span class="text-xl font-bold text-dark">$${product.price.toFixed(2)}</span>
+                            <button onclick="cart.add(${product.id})" class="bg-gray-100 hover:bg-primary hover:text-white text-gray-700 p-2.5 rounded-xl transition duration-200">
+                                <i data-lucide="plus" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+        };
+
+        // --- Cart Logic ---
+        const cart = {
+            items: [],
+            add: function(productId) {
+                const product = products.find(p => p.id === productId);
+                const existing = this.items.find(i => i.id === productId);
+                
+                if (existing) {
+                    existing.quantity++;
+                } else {
+                    this.items.push({ ...product, quantity: 1 });
+                }
+                
+                this.updateUI();
+                this.showToast(`Added ${product.name} to cart!`);
+            },
+            remove: function(productId) {
+                this.items = this.items.filter(i => i.id !== productId);
+                this.updateUI();
+            },
+            toggle: function() {
+                const overlay = document.getElementById('cart-overlay');
+                const sidebar = document.getElementById('cart-sidebar');
+                
+                if (sidebar.classList.contains('translate-x-full')) {
+                    // Open
+                    overlay.classList.remove('hidden');
+                    // Small timeout to allow display:block to apply before opacity transition
+                    setTimeout(() => {
+                        overlay.classList.remove('opacity-0');
+                        sidebar.classList.remove('translate-x-full');
+                    }, 10);
+                } else {
+                    // Close
+                    overlay.classList.add('opacity-0');
+                    sidebar.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                    }, 300);
+                }
+            },
+            updateUI: function() {
+                // Update Badge
+                const count = this.items.reduce((acc, item) => acc + item.quantity, 0);
+                const badge = document.getElementById('cart-count');
+                badge.innerText = count;
+                badge.classList.remove('scale-0');
+                if (count === 0) badge.classList.add('scale-0');
+
+                // Update List
+                const container = document.getElementById('cart-items');
+                const totalEl = document.getElementById('cart-total');
+                
+                if (this.items.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center text-gray-400 mt-10">
+                            <i data-lucide="shopping-bag" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                            <p>Your cart is empty.</p>
+                            <button onclick="cart.toggle(); router.navigate('shop')" class="mt-4 text-primary font-medium hover:underline">Start Shopping</button>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = this.items.map(item => `
+                        <div class="flex gap-4 mb-4">
+                            <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                                <img src="${item.image}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-sm text-dark line-clamp-1">${item.name}</h4>
+                                <div class="text-sm text-gray-500">$${item.price} x ${item.quantity}</div>
+                            </div>
+                            <button onclick="cart.remove(${item.id})" class="text-gray-400 hover:text-red-500 h-fit">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    `).join('');
+                }
+
+                // Update Total
+                const total = this.items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+                totalEl.innerText = '$' + total.toFixed(2);
+                
+                lucide.createIcons();
+            },
+            showToast: function(message) {
+                // Simple toast notification
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-dark text-white px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-2 text-sm font-medium fade-in';
+                toast.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i> ${message}`;
+                document.body.appendChild(toast);
+                lucide.createIcons();
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transition = 'opacity 0.5s';
+                    setTimeout(() => toast.remove(), 500);
+                }, 2000);
+            }
+        };
+
+        const mobileMenu = {
+            toggle: function() {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.toggle('hidden');
+            }
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            router.init();
+        });
+
+    </script>
+</body>
+</html>
