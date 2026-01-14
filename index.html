@@ -131,7 +131,7 @@
                 <span class="text-gray-600 font-medium">Subtotal</span>
                 <span id="cart-total" class="text-2xl font-bold text-dark">$0.00</span>
             </div>
-            <button onclick="alert('Please contact us directly to make purchase!')" class="w-full bg-primary hover:bg-red-400 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition active:scale-95 flex justify-center items-center gap-2">
+            <button onclick="window.location.href = 'checkout.html'" class="w-full bg-primary hover:bg-red-400 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition active:scale-95 flex justify-center items-center gap-2">
                 Secure Checkout <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </button>
         </div>
@@ -723,6 +723,9 @@
         // --- Cart Logic ---
         const cart = {
             items: [],
+            init: function() {
+                this.load();
+            },
             add: function(productId) {
                 const product = products.find(p => p.id === productId);
                 const existing = this.items.find(i => i.id === productId);
@@ -733,14 +736,26 @@
                     this.items.push({ ...product, quantity: 1 });
                 }
                 
+                this.save();
                 this.updateUI();
                 this.showToast(`Added ${product.name} to your loop!`);
             },
             remove: function(productId) {
                 this.items = this.items.filter(i => i.id !== productId);
+                this.save();
+                this.updateUI();
+            },
+            save: function() {
+                localStorage.setItem('hugloop-cart', JSON.stringify(this.items));
+            },
+            load: function() {
+                this.items = JSON.parse(localStorage.getItem('hugloop-cart') || '[]');
                 this.updateUI();
             },
             toggle: function() {
+                if (this.items.length === 0) {
+                    return;
+                }
                 const overlay = document.getElementById('cart-overlay');
                 const sidebar = document.getElementById('cart-sidebar');
                 
@@ -829,6 +844,13 @@
         // Initialize
         window.addEventListener('DOMContentLoaded', () => {
             router.init();
+            cart.init();
+            if (window.location.hash === '#clearcart') {
+                cart.items = [];
+                cart.save();
+                cart.updateUI();
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+            }
         });
 
     </script>
