@@ -340,11 +340,7 @@
                     </div>
                     
                     <div class="mt-4 md:mt-0 flex gap-4">
-                        <select id="sort-select" class="bg-white border border-gray-200 text-gray-700 py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer">
-                            <option value="featured">Featured</option>
-                            <option value="price-low">Price: Low to High</option>
-                            <option value="price-high">Price: High to Low</option>
-                        </select>
+
                     </div>
                 </div>
 
@@ -370,6 +366,39 @@
                                     <label class="flex items-center space-x-3 cursor-pointer">
                                         <input type="radio" name="category" value="Family Bond" class="form-radio text-primary h-4 w-4">
                                         <span class="text-gray-700">Family Bond</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="filter" class="w-4 h-4"></i> Ages</h3>
+                                <div class="space-y-2" id="age-filters">
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="age" value="all" checked class="form-radio text-primary h-4 w-4">
+                                        <span class="text-gray-700">All</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="age" value="2-6" class="form-radio text-primary h-4 w-4">
+                                        <span class="text-gray-700">2-6</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="age" value="2-5" class="form-radio text-primary h-4 w-4">
+                                        <span class="text-gray-700">2-5</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="age" value="3+" class="form-radio text-primary h-4 w-4">
+                                        <span class="text-gray-700">3+</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="age" value="3-5" class="form-radio text-primary h-4 w-4">
+                                        <span class="text-gray-700">3-5</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="age" value="3-6" class="form-radio text-primary h-4 w-4">
+                                        <span class="text-gray-700">3-6</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="age" value="4-8" class="form-radio text-primary h-4 w-4">
+                                        <span class="text-gray-700">4-8</span>
                                     </label>
                                 </div>
                             </div>
@@ -503,7 +532,7 @@
                 name: "Recycled Ocean Blocks",
                 price: 59.99,
                 category: "Sustainable Build",
-                age: "2+",
+                age: "2-5",
                 image: "images/occean_blocks.jpg",
                 description: "Colorful geometric blocks made entirely from recycled fishing nets."
             },
@@ -611,19 +640,30 @@
             },
             setupShop: function() {
                 const grid = document.getElementById('shop-products-grid');
-                const filters = document.getElementById('category-filters');
+                const categoryFilters = document.getElementById('category-filters');
+                const ageFilters = document.getElementById('age-filters');
                 const countSpan = document.getElementById('product-count');
                 
-                const render = (category = 'all') => {
+                const render = () => {
+                    const selectedCategory = categoryFilters.querySelector('input[name="category"]:checked').value;
+                    const selectedAge = ageFilters.querySelector('input[name="age"]:checked').value;
+
                     grid.innerHTML = '';
-                    const filtered = category === 'all' 
-                        ? products 
-                        : products.filter(p => p.category === category);
+                    
+                    let filtered = products;
+
+                    if (selectedCategory !== 'all') {
+                        filtered = filtered.filter(p => p.category === selectedCategory);
+                    }
+
+                    if (selectedAge !== 'all') {
+                        filtered = filtered.filter(p => p.age === selectedAge);
+                    }
                     
                     countSpan.innerText = filtered.length;
                     
                     if(filtered.length === 0) {
-                        grid.innerHTML = `<div class="col-span-3 text-center py-10 text-gray-400">No products found in this category.</div>`;
+                        grid.innerHTML = `<div class="col-span-3 text-center py-10 text-gray-400">No products found with these filters.</div>`;
                     } else {
                         filtered.forEach(p => {
                             grid.innerHTML += this.createProductCard(p);
@@ -636,11 +676,8 @@
                 render();
 
                 // Event Listeners for Filters
-                filters.addEventListener('change', (e) => {
-                    if (e.target.name === 'category') {
-                        render(e.target.value);
-                    }
-                });
+                categoryFilters.addEventListener('change', render);
+                ageFilters.addEventListener('change', render);
             },
             createProductCard: function(product) {
                 // Defines badges based on category for visual flair
