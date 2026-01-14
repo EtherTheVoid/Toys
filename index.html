@@ -82,6 +82,7 @@
                     <button onclick="router.navigate('home')" class="text-gray-600 hover:text-primary font-medium transition">Home</button>
                     <button onclick="router.navigate('shop')" class="text-gray-600 hover:text-primary font-medium transition">Shop Collection</button>
                     <button onclick="router.navigate('about')" class="text-gray-600 hover:text-primary font-medium transition">Our Purpose</button>
+                    <button onclick="router.navigate('contact')" class="text-gray-600 hover:text-primary font-medium transition">Contact</button>
                 </div>
 
                 <!-- Cart & Mobile Menu Button -->
@@ -103,6 +104,7 @@
                 <button onclick="router.navigate('home'); mobileMenu.toggle()" class="text-left font-medium text-gray-700">Home</button>
                 <button onclick="router.navigate('shop'); mobileMenu.toggle()" class="text-left font-medium text-gray-700">Shop Collection</button>
                 <button onclick="router.navigate('about'); mobileMenu.toggle()" class="text-left font-medium text-gray-700">Our Purpose</button>
+                <button onclick="router.navigate('contact'); mobileMenu.toggle()" class="text-left font-medium text-gray-700">Contact</button>
             </div>
         </div>
     </nav>
@@ -164,7 +166,7 @@
                     <ul class="space-y-2 text-sm text-gray-400">
                         <li><a href="#" class="hover:text-white transition">Shipping & Returns</a></li>
                         <li><a href="#" class="hover:text-white transition">Care Guide</a></li>
-                        <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+                        <li><a href="#" onclick="router.navigate('contact')" class="hover:text-white transition">Contact Us</a></li>
                         <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
                     </ul>
                 </div>
@@ -599,6 +601,10 @@
                 this.handleRoute(); // Initial load
             },
             navigate: function(route) {
+                if (route === 'contact') {
+                    window.location.href = 'contact.html';
+                    return;
+                }
                 history.pushState({}, '', '#' + route);
                 this.handleRoute();
                 window.scrollTo(0, 0);
@@ -627,6 +633,8 @@
                     const tpl = document.getElementById('tpl-about');
                     app.appendChild(tpl.content.cloneNode(true));
                     lucide.createIcons();
+                } else if (hash === 'contact') {
+                    window.location.href = 'contact.html';
                 }
             },
             renderHomeProducts: function() {
