@@ -845,11 +845,9 @@
         window.addEventListener('DOMContentLoaded', () => {
             router.init();
             cart.init();
-            if (window.location.hash === '#clearcart') {
+            if (localStorage.getItem('hugloop-cart') === null) {
                 cart.items = [];
-                cart.save();
                 cart.updateUI();
-                history.pushState("", document.title, window.location.pathname + window.location.search);
             }
         });
 

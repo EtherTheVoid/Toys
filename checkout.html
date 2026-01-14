@@ -107,24 +107,24 @@
                             <div class="grid grid-cols-1 gap-6">
                                 <div>
                                     <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
-                                    <input type="text" id="name" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                    <input type="text" id="name" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-3 border">
                                 </div>
                                 <div>
                                     <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                                    <input type="email" id="email" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                    <input type="email" id="email" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-3 border">
                                 </div>
                                 <div>
                                     <label for="address" class="block text-sm font-medium text-gray-700">Street Address</label>
-                                    <input type="text" id="address" name="address" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                    <input type="text" id="address" name="address" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-3 border">
                                 </div>
                                 <div class="grid grid-cols-2 gap-6">
                                     <div>
                                         <label for="city" class="block text-sm font-medium text-gray-700">City</label>
-                                        <input type="text" id="city" name="city" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                        <input type="text" id="city" name="city" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-3 border">
                                     </div>
                                     <div>
                                         <label for="zip" class="block text-sm font-medium text-gray-700">ZIP / Postal Code</label>
-                                        <input type="text" id="zip" name="zip" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                        <input type="text" id="zip" name="zip" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-3 border">
                                     </div>
                                 </div>
                             </div>
@@ -169,9 +169,9 @@
                 <div>
                     <h3 class="font-bold text-lg mb-4 brand-font text-secondary">Shop</h3>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" onclick="router.navigate('shop')" class="hover:text-white transition">All Treasures</a></li>
-                        <li><a href="#" onclick="router.navigate('shop')" class="hover:text-white transition">New Arrivals</a></li>
-                        <li><a href="#" onclick="router.navigate('shop')" class="hover:text-white transition">Sustainable Picks</a></li>
+                        <li><a href="#" onclick="router.navigate('shop'); return false;" class="hover:text-white transition">All Treasures</a></li>
+                        <li><a href="#" onclick="router.navigate('shop'); return false;" class="hover:text-white transition">New Arrivals</a></li>
+                        <li><a href="#" onclick="router.navigate('shop'); return false;" class="hover:text-white transition">Sustainable Picks</a></li>
                         <li><a href="#" class="hover:text-white transition">Gift Cards</a></li>
                     </ul>
                 </div>
@@ -180,7 +180,7 @@
                     <ul class="space-y-2 text-sm text-gray-400">
                         <li><a href="#" class="hover:text-white transition">Shipping & Returns</a></li>
                         <li><a href="#" class="hover:text-white transition">Care Guide</a></li>
-                        <li><a href="#" onclick="router.navigate('contact')" class="hover:text-white transition">Contact Us</a></li>
+                        <li><a href="#" onclick="router.navigate('contact'); return false;" class="hover:text-white transition">Contact Us</a></li>
                         <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
                     </ul>
                 </div>
@@ -204,11 +204,13 @@
     <script>
         const router = {
             navigate: function(route) {
+                // Check if route is contact, which might be a separate file in some setups
+                // based on index.html logic, but here we route back to index.html with hash
                 if (route === 'contact') {
                     window.location.href = 'contact.html';
-                    return;
+                } else {
+                    window.location.href = 'index.html#' + route;
                 }
-                window.location.href = 'index.html#' + route;
             }
         };
 
@@ -226,26 +228,38 @@
             const checkoutForm = document.getElementById('checkout-form');
 
             if (cartData.length === 0) {
-                document.querySelector('.grid').innerHTML = `
-                    <div class="text-center col-span-2">
-                        <p class="text-gray-500">Your cart is empty.</p>
-                        <button onclick="router.navigate('shop')" class="mt-4 bg-primary hover:bg-red-400 text-white font-bold py-3 px-4 rounded-xl shadow-lg">
-                            Back to Shop
-                        </button>
-                    </div>
-                `;
+                // If cart is empty, show message and button back to shop
+                const gridContainer = document.querySelector('.grid');
+                if(gridContainer) {
+                    gridContainer.innerHTML = `
+                        <div class="text-center col-span-1 md:col-span-2 py-10">
+                            <i data-lucide="shopping-bag" class="w-16 h-16 mx-auto text-gray-300 mb-4"></i>
+                            <h2 class="text-2xl font-bold text-dark mb-2">Your Loop is empty</h2>
+                            <p class="text-gray-500 mb-6">Looks like you haven't added any treasures yet.</p>
+                            <button onclick="router.navigate('shop')" class="bg-primary hover:bg-red-400 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition transform hover:-translate-y-1">
+                                Back to Shop
+                            </button>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                }
                 return;
             }
 
             cartData.forEach(item => {
                 const itemElement = document.createElement('div');
-                itemElement.className = 'flex justify-between';
+                itemElement.className = 'flex justify-between items-center py-2 border-b border-gray-50 last:border-0';
                 itemElement.innerHTML = `
-                    <div>
-                        <h4 class="font-medium text-dark">${item.name}</h4>
-                        <p class="text-sm text-gray-500">Quantity: ${item.quantity}</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm text-dark">${item.name}</h4>
+                            <p class="text-xs text-gray-500">Qty: ${item.quantity}</p>
+                        </div>
                     </div>
-                    <span class="font-medium text-dark">$${(item.price * item.quantity).toFixed(2)}</span>
+                    <span class="font-bold text-dark">$${(item.price * item.quantity).toFixed(2)}</span>
                 `;
                 cartSummary.appendChild(itemElement);
             });
@@ -256,24 +270,32 @@
             checkoutForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const mainContent = document.querySelector('main');
+                
+                // Clear cart
+                localStorage.removeItem('hugloop-cart');
+                
+                // Show Success Message
                 mainContent.innerHTML = `
                     <div class="py-20 text-center fade-in">
                         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                            <div class="bg-white p-12 rounded-3xl shadow-xl border border-gray-100">
+                                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-green-500 mx-auto mb-6">
+                                    <i data-lucide="check" class="w-10 h-10"></i>
+                                </div>
                                 <h1 class="text-3xl font-bold text-dark mb-4">Thank you for your order!</h1>
-                                <p class="text-gray-600 text-lg">We will contact you shortly to complete the sale.</p>
-                                <button onclick="router.navigate('home')" class="mt-8 bg-primary hover:bg-red-400 text-white font-bold py-3 px-4 rounded-xl shadow-lg">
-                                    Back to Home
+                                <p class="text-gray-600 text-lg mb-8">Your order has been successfully submitted. We will contact you for payment and we're packing your treasures with care.</p>
+                                <button onclick="router.navigate('home')" class="bg-primary hover:bg-red-400 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition transform hover:-translate-y-1">
+                                    Return Home
                                 </button>
                             </div>
                         </div>
                     </div>
                 `;
-                localStorage.removeItem('hugloop-cart');
-                window.location.href = 'index.html#clearcart';
+                lucide.createIcons();
             });
 
-        lucide.createIcons();
+            lucide.createIcons();
+        });
     </script>
 </body>
 </html>
